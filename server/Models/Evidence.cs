@@ -4,7 +4,7 @@ namespace CrimeRecordsManager.Models
 {
     public class Evidence
     {
-        public int Id { get; private set; }
+        public int Id { get; set; }
         public string Description { get; set; }
         public DateTime GatheredAt { get; set; }
 

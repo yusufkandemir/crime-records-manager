@@ -4,7 +4,7 @@ namespace CrimeRecordsManager.Models
 {
     public class Case
     {
-        public int Id { get; private set; }
+        public int Id { get; set; }
         public string Description { get; set; }
 
         public virtual PoliceStation StationInCharge { get; set; }

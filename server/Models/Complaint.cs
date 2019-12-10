@@ -4,7 +4,7 @@ namespace CrimeRecordsManager.Models
 {
     public class Complaint
     {
-        public int Id { get; private set; }
+        public int Id { get; set; }
         public string Details { get; set; }
         public string Place { get; set; }
         public DateTime FiledAt { get; set; }
