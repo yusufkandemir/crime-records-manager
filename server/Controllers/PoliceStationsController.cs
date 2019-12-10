@@ -36,8 +36,6 @@ namespace CrimeRecordsManager.Controllers
         {
             var query = db.PoliceStations.AsQueryable();
 
-            query = query.Include(x => x.HeadOfficer);
-
             if (includeOfficers)
             {
                 query = query.Include(x => x.Officers);
@@ -68,13 +66,6 @@ namespace CrimeRecordsManager.Controllers
 
             db.Entry(policeStation).State = EntityState.Modified;
 
-            var headOfficer = await db.PoliceOfficers.FindAsync(policeStation.HeadOfficer.Id);
-            if (headOfficer != null)
-            {
-                headOfficer.Station = policeStation;
-                policeStation.HeadOfficer = headOfficer;
-            }
-
             try
             {
                 await db.SaveChangesAsync();
@@ -101,13 +92,6 @@ namespace CrimeRecordsManager.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
-
-            var headOfficer = await db.PoliceOfficers.FindAsync(policeStation.HeadOfficer.Id);
-            if (headOfficer != null)
-            {
-                headOfficer.Station = policeStation;
-                policeStation.HeadOfficer = headOfficer;
             }
 
             db.PoliceStations.Add(policeStation);
