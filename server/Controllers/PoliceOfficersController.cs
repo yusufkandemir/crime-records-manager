@@ -66,12 +66,6 @@ namespace CrimeRecordsManager.Controllers
 
             db.Entry(policeOfficer).State = EntityState.Modified;
 
-            var station = await db.PoliceStations.FindAsync(policeOfficer.Station.Id);
-            if (station != null)
-            {
-                policeOfficer.Station = station;
-            }
-
             try
             {
                 await db.SaveChangesAsync();
@@ -98,12 +92,6 @@ namespace CrimeRecordsManager.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
-
-            var station = await db.PoliceStations.FindAsync(policeOfficer.Station.Id);
-            if (station != null)
-            {
-                policeOfficer.Station = station;
             }
 
             db.PoliceOfficers.Add(policeOfficer);

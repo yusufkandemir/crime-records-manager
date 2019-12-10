@@ -7,6 +7,7 @@ namespace CrimeRecordsManager.Models
     {
         public string Rank { get; set; }
 
+        public int? StationId { get; set; }
         public virtual PoliceStation Station { get; set; }
     }
 }
