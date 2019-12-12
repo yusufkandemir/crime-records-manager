@@ -18,6 +18,8 @@ namespace CrimeRecordsManager.Models
         public CrimeContext() : base("name=CrimeContext")
         {
             Configuration.LazyLoadingEnabled = false;
+
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<CrimeContext, CrimeRecordsManager.Migrations.Configuration>());
         }
 
         public DbSet<PoliceStation> PoliceStations { get; set; }
