@@ -97,6 +97,8 @@ namespace CrimeRecordsManager.Controllers
             db.PoliceOfficers.Add(policeOfficer);
             await db.SaveChangesAsync();
 
+            db.Entry(policeOfficer).Reference(x => x.Station).Load();
+
             return CreatedAtRoute("DefaultApi", new { id = policeOfficer.Id }, policeOfficer);
         }
 
