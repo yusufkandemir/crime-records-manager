@@ -8,7 +8,6 @@ namespace CrimeRecordsManager.Models
         public string Name { get; set; }
         public string Address { get; set; }
 
-        public virtual PoliceOfficer HeadOfficer { get; set; }
         public virtual ICollection<PoliceOfficer> Officers { get; set; }
     }
 }
