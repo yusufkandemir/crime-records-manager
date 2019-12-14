@@ -32,7 +32,7 @@ namespace CrimeRecordsManager.Controllers
 
         // GET: api/PoliceOfficers/5
         [ResponseType(typeof(PoliceOfficer))]
-        public async Task<IHttpActionResult> GetPoliceOfficer(int id, bool includeStation)
+        public async Task<IHttpActionResult> GetPoliceOfficer(int id, bool includeStation = false)
         {
             var query = db.PoliceOfficers.AsQueryable();
 
