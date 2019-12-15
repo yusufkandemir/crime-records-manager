@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using Microsoft.AspNet.OData.Builder;
+using Microsoft.AspNet.OData.Extensions;
+using CrimeRecordsManager.Models;
 
 namespace CrimeRecordsManager
 {
@@ -9,19 +12,16 @@ namespace CrimeRecordsManager
     {
         public static void Register(HttpConfiguration config)
         {
-            // Web API configuration and services
+            ODataModelBuilder builder = new ODataConventionModelBuilder();
+            builder.EntitySet<PoliceStation>("PoliceStations");
+            builder.EntitySet<PoliceOfficer>("PoliceOfficers");
 
-            // Web API routes
-            config.MapHttpAttributeRoutes();
-
-            config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
+            config.MapODataServiceRoute(
+                routeName: "ODataRoute",
+                routePrefix: "api",
+                model: builder.GetEdmModel()
             );
-
-            config.Formatters.JsonFormatter.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            config.Formatters.Remove(config.Formatters.XmlFormatter);
+            config.Count().Filter().OrderBy().Expand().Select().MaxTop(100);
         }
     }
 }
