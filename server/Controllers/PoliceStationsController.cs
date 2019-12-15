@@ -1,65 +1,57 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Description;
+using Microsoft.AspNet.OData;
 using CrimeRecordsManager.Models;
 
 namespace CrimeRecordsManager.Controllers
 {
-    public class PoliceStationsController : ApiController
+    public class PoliceStationsController : ODataController
     {
         private CrimeContext db = new CrimeContext();
 
         // GET: api/PoliceStations
-        public IQueryable<PoliceStation> GetPoliceStations(bool includeOfficers = false)
+        [EnableQuery(MaxTop = 50)]
+        public IQueryable<PoliceStation> Get()
         {
-            var result = db.PoliceStations.AsQueryable();
-
-            if (includeOfficers)
-            {
-                result = result.Include(x => x.Officers);
-            }
-
-            return result;
+            return db.PoliceStations;
         }
 
         // GET: api/PoliceStations/5
-        [ResponseType(typeof(PoliceStation))]
-        public async Task<IHttpActionResult> GetPoliceStation(int id, bool includeOfficers = false)
+        [EnableQuery]
+        public SingleResult<PoliceStation> Get([FromODataUri] int key)
         {
-            var query = db.PoliceStations.AsQueryable();
+            IQueryable<PoliceStation> result = db.PoliceStations.Where(p => p.Id == key);
 
-            if (includeOfficers)
-            {
-                query = query.Include(x => x.Officers);
-            }
-
-            PoliceStation policeStation = await query.FirstOrDefaultAsync(x => x.Id == id);
-            if (policeStation == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(policeStation);
+            return SingleResult.Create(result);
         }
 
-        // PUT: api/PoliceStations/5
-        [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutPoliceStation(int id, PoliceStation policeStation)
+        // POST: api/PoliceStations
+        public async Task<IHttpActionResult> Post(PoliceStation policeStation)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != policeStation.Id)
+            db.PoliceStations.Add(policeStation);
+            await db.SaveChangesAsync();
+
+            return Created(policeStation);
+        }
+
+        // PUT: api/PoliceStations/5
+        public async Task<IHttpActionResult> Put([FromODataUri] int key, PoliceStation policeStation)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (key != policeStation.Id)
             {
                 return BadRequest();
             }
@@ -72,7 +64,7 @@ namespace CrimeRecordsManager.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PoliceStationExists(id))
+                if (!PoliceStationExists(key))
                 {
                     return NotFound();
                 }
@@ -82,43 +74,57 @@ namespace CrimeRecordsManager.Controllers
                 }
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Updated(policeStation);
         }
 
-        // POST: api/PoliceStations
-        [ResponseType(typeof(PoliceStation))]
-        public async Task<IHttpActionResult> PostPoliceStation(PoliceStation policeStation)
+        // PATCH: api/PoliceStations/5
+        public async Task<IHttpActionResult> Patch([FromODataUri] int key, Delta<PoliceStation> policeStation)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.PoliceStations.Add(policeStation);
-            await db.SaveChangesAsync();
+            var entity = await db.PoliceStations.FindAsync(key);
+            if (entity == null)
+            {
+                return NotFound();
+            }
 
-            return CreatedAtRoute("DefaultApi", new { id = policeStation.Id }, policeStation);
+            policeStation.Patch(entity);
+
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PoliceStationExists(key))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Updated(entity);
         }
 
         // DELETE: api/PoliceStations/5
-        [ResponseType(typeof(PoliceStation))]
-        public async Task<IHttpActionResult> DeletePoliceStation(int id, bool includeOfficers = false)
+        public async Task<IHttpActionResult> Delete([FromODataUri] int key)
         {
-            PoliceStation policeStation = await db.PoliceStations.FindAsync(id);
+            var policeStation = await db.PoliceStations.FindAsync(key);
             if (policeStation == null)
             {
                 return NotFound();
             }
 
-            if (includeOfficers)
-            {
-                db.PoliceOfficers.RemoveRange(policeStation.Officers);
-            }
-
             db.PoliceStations.Remove(policeStation);
             await db.SaveChangesAsync();
 
-            return Ok(policeStation);
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         protected override void Dispose(bool disposing)
@@ -130,9 +136,9 @@ namespace CrimeRecordsManager.Controllers
             base.Dispose(disposing);
         }
 
-        private bool PoliceStationExists(int id)
+        private bool PoliceStationExists(int key)
         {
-            return db.PoliceStations.Count(e => e.Id == id) > 0;
+            return db.PoliceStations.Any(e => e.Id == key);
         }
     }
 }
