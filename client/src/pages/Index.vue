@@ -1,6 +1,9 @@
 <template>
   <q-page class="flex flex-center">
-    <img alt="Quasar logo" src="~assets/quasar-logo-full.svg">
+    <div class="column flex-center">
+      <span class="text-h3">Welcome to</span>
+      <span class="text-h2">Crime Records Manager</span>
+    </div>
   </q-page>
 </template>
 
