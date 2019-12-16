@@ -65,6 +65,7 @@ export default {
   name: 'InvestigationReportsPage',
   components: {
     CEntitySelector,
+    CDateInput,
     CServersideCrudTable
   },
   data () {
