@@ -1,135 +1,79 @@
 <template>
   <q-page class="flex flex-center" padding>
-    <q-table
-      title="Police Officers"
+    <c-serverside-crud-table
+      :entity="{
+        dataName: 'PoliceOfficer',
+        displayName: 'Police Officer'
+      }"
+      :edited-index.sync="editedIndex"
+      :edited-item.sync="editedItem"
+      :default-item.sync="defaultItem"
+      :process-data="processData"
       class="full-width q-my-lg"
       :grid="$q.screen.xs"
       row-key="Id"
-      :data="data"
-      :columns="columns"
-      :pagination.sync="pagination"
+      :items="items"
+      :columns-config="columns"
+      :pagination-config.sync="pagination"
       :rows-per-page-options="rowsPerPageOptions"
-      :loading="loading"
-      :filter="filter"
-      @request="onRequest"
-      binary-state-sort
-      ref="dataTable"
+      :is-loading.sync="loading"
+      :is-dialog-open.sync="dialog"
+      :filter.sync="filter"
     >
-      <template v-slot:top-right>
-        <q-input dense debounce="500" v-model="filter" placeholder="Search">
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-
-        <q-btn
-          class="q-ml-md"
-          color="primary"
-          icon="person_add"
-          label="New Police Officer"
-          @click="dialog = true"
-        />
-      </template>
-
-      <template v-slot:body="props">
-        <q-tr :key="props.key" :props="props">
-          <q-td v-for="(column, name) in props.colsMap" :key="name" :props="props">
-            <template v-if="column.name === 'actions'">
-              <q-btn
-                round
-                flat
-                size="sm"
-                class="q-mx-none"
-                icon="edit"
-                @click="editItem(props.row)"
-              />
-              <q-btn
-                round
-                flat
-                size="sm"
-                class="q-mx-none"
-                icon="delete"
-                @click="deleteItem(props.row)"
-              />
+      <div class="row q-col-gutter-md">
+        <div class="col-xs-12 col-sm-6 col-md-4">
+          <q-input v-model="editedItem.Name" label="Name"></q-input>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-4">
+          <q-input v-model="editedItem.Surname" label="Surname"></q-input>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-4">
+          <q-input v-model="editedItem.Gender" label="Gender"></q-input>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-4">
+          <c-date-input v-model="editedItem.BirthDate" label="Birth Date"></c-date-input>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-4">
+          <q-input v-model="editedItem.Rank" label="Rank"></q-input>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-4">
+          <c-entity-selector
+            v-model="editedItem.StationId"
+            label="Station"
+            entity="PoliceStation"
+            value-column="Id"
+            display-column="Name"
+            ref="stationSelector"
+          >
+            <template v-slot:prepend>
+              <q-icon name="emoji_transportation" @click.stop />
             </template>
-            <template v-else>{{ (column.format || (x => x))(props.row[column.field]) }}</template>
-          </q-td>
-        </q-tr>
-      </template>
-    </q-table>
-    <q-dialog v-model="dialog">
-      <q-card class="q-pa-sm">
-        <q-card-section>
-          <span class="text-h5">{{ formTitle }}</span>
-        </q-card-section>
-
-        <q-card-section>
-          <div class="row q-col-gutter-md">
-            <div class="col-xs-12 col-sm-6 col-md-4">
-              <q-input v-model="editedItem.Name" label="Name"></q-input>
-            </div>
-            <div class="col-xs-12 col-sm-6 col-md-4">
-              <q-input v-model="editedItem.Surname" label="Surname"></q-input>
-            </div>
-            <div class="col-xs-12 col-sm-6 col-md-4">
-              <q-input v-model="editedItem.Gender" label="Gender"></q-input>
-            </div>
-            <div class="col-xs-12 col-sm-6 col-md-4">
-              <c-date-input v-model="editedItem.BirthDate" label="Birth Date"></c-date-input>
-            </div>
-            <div class="col-xs-12 col-sm-6 col-md-4">
-              <q-input v-model="editedItem.Rank" label="Rank"></q-input>
-            </div>
-            <div class="col-xs-12 col-sm-6 col-md-4">
-              <c-entity-selector
-                v-model="editedItem.StationId"
-                label="Station"
-                entity="PoliceStation"
-                value-column="Id"
-                display-column="Name"
-                ref="stationSelector"
-              >
-                <template v-slot:prepend>
-                  <q-icon name="emoji_transportation" @click.stop />
-                </template>
-              </c-entity-selector>
-            </div>
-          </div>
-        </q-card-section>
-
-        <q-card-actions>
-          <q-space />
-          <q-btn flat color="primary" :loading="loading" @click="close">Cancel</q-btn>
-          <q-btn flat color="primary" :loading="loading" @click="save">Save</q-btn>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+          </c-entity-selector>
+        </div>
+      </div>
+    </c-serverside-crud-table>
   </q-page>
 </template>
 
 <script>
 import { date } from 'quasar'
-
 const { formatDate } = date
 
-import { CEntitySelector } from '../components/CEntitySelector'
 import { CDateInput } from '../components/CDateInput'
-
-import serverSideTable from '../mixins/server-side-table'
+import { CEntitySelector } from '../components/CEntitySelector'
+import { CServersideCrudTable } from '../components/CServersideCrudTable'
 
 export default {
   name: 'PoliceOfficersPage',
-  mixins: [
-    serverSideTable
-  ],
   components: {
     CEntitySelector,
-    CDateInput
+    CDateInput,
+    CServersideCrudTable
   },
   data () {
     return {
       entityName: 'PoliceOfficer',
-      data: [],
+      items: [],
       editedIndex: -1,
       editedItem: {
         Name: '',
@@ -202,17 +146,10 @@ export default {
       dialog: false
     }
   },
-  computed: {
-    formTitle () {
-      return this.editedIndex === -1 ? 'New Police Officer' : 'Edit Police Officer'
-    }
-  },
   watch: {
     async dialog (val) {
-      val || this.close()
-
       // If updating an item, and it has a StationId set
-      if (this.editedIndex > -1 && this.editedItem.StationId > 0) {
+      if (val && this.editedIndex > -1 && this.editedItem.StationId > 0) {
         // Fetch and update the options to prevent seeing just the id
         // FIXME: the needed result might not be in the response because of pagination limits
         await this.$nextTick()
@@ -220,72 +157,9 @@ export default {
       }
     }
   },
-  mounted () {
-    this.onRequest({
-      pagination: this.pagination,
-      filter: ''
-    })
-  },
   methods: {
-    editItem (item) {
-      this.editedIndex = this.data.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialog = true
-    },
-
-    async deleteItem (item) {
-      if (!confirm('Are you sure you want to delete this item?')) return
-
-      await fetch(`/api/${this.entityName}s/${item.Id}`, {
-        method: 'DELETE'
-      })
-
-      // Trigger table for update
-      this.$refs.dataTable.requestServerInteraction({
-        pagination: this.pagination,
-        filter: this.filter
-      })
-    },
-
-    close () {
-      this.dialog = false
-      this.editedItem = Object.assign({}, this.defaultItem)
-      this.editedIndex = -1
-    },
-
-    async save () {
-      const isUpdating = this.editedIndex > -1
-
-      this.loading = true
-      await this.pushToServer(this.editedItem, isUpdating)
-
-      // Trigger table for update
-      this.$refs.dataTable.requestServerInteraction({
-        pagination: this.pagination,
-        filter: this.filter
-      })
-
-      this.loading = false
-
-      this.close()
-    },
-
-    async pushToServer (item, update = false) {
-      let url = `/api/${this.entityName}s/${update ? item.Id : ''}`
-
-      return fetch(url, {
-        method: update ? 'PUT' : 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(this.processData(item))
-      })
-    },
-
     processData (item) {
       const result = { ...item }
-
       if (result.BirthDate !== null || result.BirthDate !== undefined) {
         result.BirthDate = (new Date(result.BirthDate)).toISOString()
       }
