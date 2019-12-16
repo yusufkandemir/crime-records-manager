@@ -130,12 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-<<<<<<< Updated upstream
-    <Compile Include="Controllers\ComplainantsController.cs" />
-    <Compile Include="Controllers\ComplaintsController.cs" />
-=======
     <Compile Include="Controllers\InvestigationReportsController.cs" />
->>>>>>> Stashed changes
     <Compile Include="Controllers\SuspectsController.cs" />
     <Compile Include="Controllers\PoliceOfficersController.cs" />
     <Compile Include="Controllers\PoliceStationsController.cs" />
