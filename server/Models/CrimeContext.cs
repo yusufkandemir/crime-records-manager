@@ -23,7 +23,7 @@ namespace CrimeRecordsManager.Models
         }
 
         public DbSet<PoliceStation> PoliceStations { get; set; }
-
         public DbSet<PoliceOfficer> PoliceOfficers { get; set; }
+        public DbSet<Suspect> Suspects { get; set; }
     }
 }
