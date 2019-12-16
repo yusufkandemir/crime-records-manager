@@ -15,6 +15,7 @@ namespace CrimeRecordsManager
             ODataModelBuilder builder = new ODataConventionModelBuilder();
             builder.EntitySet<PoliceStation>("PoliceStations");
             builder.EntitySet<PoliceOfficer>("PoliceOfficers");
+            builder.EntitySet<Suspect>("Suspects");
 
             config.MapODataServiceRoute(
                 routeName: "ODataRoute",

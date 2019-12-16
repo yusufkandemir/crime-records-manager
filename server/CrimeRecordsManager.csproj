@@ -130,6 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\SuspectsController.cs" />
     <Compile Include="Controllers\PoliceOfficersController.cs" />
     <Compile Include="Controllers\PoliceStationsController.cs" />
     <Compile Include="Global.asax.cs">
