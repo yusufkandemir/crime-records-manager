@@ -16,6 +16,8 @@ namespace CrimeRecordsManager
             builder.EntitySet<PoliceStation>("PoliceStations");
             builder.EntitySet<PoliceOfficer>("PoliceOfficers");
             builder.EntitySet<Suspect>("Suspects");
+            builder.EntitySet<Complaint>("Complaints");
+            builder.EntitySet<Complainant>("Complainants");
 
             config.MapODataServiceRoute(
                 routeName: "ODataRoute",
