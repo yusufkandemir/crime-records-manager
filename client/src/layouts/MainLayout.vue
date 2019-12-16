@@ -19,7 +19,6 @@
 
     <q-drawer
       v-model="isLeftDrawerOpen"
-      overlay
       elevated
       show-if-above
     >
