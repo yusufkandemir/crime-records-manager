@@ -21,20 +21,19 @@
       :filter.sync="filter"
     >
       <div class="row q-col-gutter-md">
-        <div class="col-xs-12 col-sm-6 col-md-4">
+        <div class="col-xs-12 col-sm-6">
           <q-input v-model="editedItem.Act" label="Act"></q-input>
         </div>
-        <div class="col-xs-12 col-sm-6 col-md-4">
-          <q-input v-model="editedItem.Address" label="Address"></q-input>
+        <div class="col-xs-12 col-sm-6">
+          <q-input v-model="editedItem.Address" label="Address" autogrow></q-input>
         </div>
-        <div class="col-xs-12 col-sm-6 col-md-4">
-          <c-date-input v-model="editedItem.OccuredAt" label="Occured Time"></c-date-input>
+        <div class="col-xs-12 col-sm-6">
+          <c-date-input v-model="editedItem.OccuredAt" label="Occured At"></c-date-input>
         </div>
-        <div class="col-xs-12 col-sm-6 col-md-4">
-          <c-date-input v-model="editedItem.WrittenAt " label="Written Time"></c-date-input>
+        <div class="col-xs-12 col-sm-6">
+          <c-date-input v-model="editedItem.WrittenAt " label="Written At"></c-date-input>
         </div>
-
-        <div class="col-xs-12 col-sm-6 col-md-4">
+        <div class="col-xs-12 col-sm-6 offset-sm-3">
           <c-entity-selector
             v-model="editedItem.ReporterId"
             label="Officer"
