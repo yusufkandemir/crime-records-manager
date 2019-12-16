@@ -101,27 +101,18 @@
               <q-input v-model="editedItem.Rank" label="Rank"></q-input>
             </div>
             <div class="col-xs-12 col-sm-6 col-md-4">
-              <q-select
+              <c-entity-selector
                 v-model="editedItem.StationId"
-                use-input
-                hide-selected
-                fill-input
-                input-debounce="500"
                 label="Station"
-                :options="stationOptions"
-                @filter="filterStationOptions"
-                map-options
+                entity="PoliceStation"
+                value-column="Id"
+                display-column="Name"
+                ref="stationSelector"
               >
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">No results</q-item-section>
-                  </q-item>
-                </template>
-
                 <template v-slot:prepend>
                   <q-icon name="emoji_transportation" @click.stop />
                 </template>
-              </q-select>
+              </c-entity-selector>
             </div>
           </div>
         </q-card-section>
@@ -141,8 +132,13 @@ import { date } from 'quasar'
 
 const { formatDate } = date
 
+import { CEntitySelector } from '../components/CEntitySelector'
+
 export default {
   name: 'PoliceOfficersPage',
+  components: {
+    CEntitySelector
+  },
   data () {
     return {
       data: [],
@@ -215,8 +211,7 @@ export default {
         }
       ],
       loading: false,
-      dialog: false,
-      stationOptions: []
+      dialog: false
     }
   },
   computed: {
@@ -232,7 +227,8 @@ export default {
       if (this.editedIndex > -1 && this.editedItem.StationId > 0) {
         // Fetch and update the options to prevent seeing just the id
         // FIXME: the needed result might not be in the response because of pagination limits
-        this.stationOptions = await this.fetchStationOptions()
+        await this.$nextTick()
+        await this.$refs.stationSelector.refreshOptions()
       }
     }
   },
@@ -357,30 +353,6 @@ export default {
           BirthDate: item.BirthDate !== null ? (new Date(item.BirthDate)).toISOString() : null,
           StationId: item.StationId !== null ? item.StationId.value : null
         })
-      })
-    },
-
-    async fetchStationOptions (filter) {
-      const params = new URLSearchParams()
-
-      if (filter) {
-        params.append('$filter', `contains(Name, '${filter}')`)
-      }
-
-      let url = `/api/PoliceStations?${params.toString()}`
-
-      const response = await fetch(url)
-      const { value: stations } = await response.json()
-
-      return stations.map(station => ({
-        value: station.Id,
-        label: station.Name
-      }))
-    },
-
-    filterStationOptions (filter, update, abort) {
-      update(async () => {
-        this.stationOptions = await this.fetchStationOptions(filter)
       })
     }
   }
