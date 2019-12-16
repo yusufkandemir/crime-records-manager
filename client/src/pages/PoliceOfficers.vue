@@ -13,6 +13,7 @@
       :filter="filter"
       @request="onRequest"
       binary-state-sort
+      ref="dataTable"
     >
       <template v-slot:top-right>
         <q-input dense debounce="500" v-model="filter" placeholder="Search">
@@ -20,8 +21,95 @@
             <q-icon name="search" />
           </template>
         </q-input>
+
+        <q-btn
+          class="q-ml-md"
+          color="primary"
+          icon="person_add"
+          label="New Police Officer"
+          @click="dialog = true"
+        />
+      </template>
+
+      <template v-slot:body="props">
+        <q-tr :key="props.key" :props="props">
+          <q-td v-for="(column, name) in props.colsMap" :key="name" :props="props">
+            <template v-if="column.name === 'actions'">
+              <q-btn
+                round
+                flat
+                size="sm"
+                class="q-mx-none"
+                icon="edit"
+                @click="editItem(props.row)"
+              />
+              <q-btn
+                round
+                flat
+                size="sm"
+                class="q-mx-none"
+                icon="delete"
+                @click="deleteItem(props.row)"
+              />
+            </template>
+            <template v-else>{{ (column.format || (x => x))(props.row[column.field]) }}</template>
+          </q-td>
+        </q-tr>
       </template>
     </q-table>
+    <q-dialog v-model="dialog">
+      <q-card class="q-pa-sm">
+        <q-card-section>
+          <span class="text-h5">{{ formTitle }}</span>
+        </q-card-section>
+
+        <q-card-section>
+          <div class="row q-col-gutter-md">
+            <div class="col-xs-12 col-sm-6 col-md-4">
+              <q-input v-model="editedItem.Name" label="Name"></q-input>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4">
+              <q-input v-model="editedItem.Surname" label="Surname"></q-input>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4">
+              <q-input v-model="editedItem.Gender" label="Gender"></q-input>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4">
+              <q-input
+                v-model="editedItem.BirthDate"
+                label="Birth Date"
+                mask="date"
+                :rules="['date']"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      ref="birthDateProxy"
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        v-model="editedItem.BirthDate"
+                        @input="() => $refs.birthDateProxy.hide()"
+                      />
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4">
+              <q-input v-model="editedItem.Rank" label="Rank"></q-input>
+            </div>
+          </div>
+        </q-card-section>
+
+        <q-card-actions>
+          <q-space />
+          <q-btn flat color="primary" :loading="loading" @click="close">Cancel</q-btn>
+          <q-btn flat color="primary" :loading="loading" @click="save">Save</q-btn>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -35,6 +123,21 @@ export default {
   data () {
     return {
       data: [],
+      editedIndex: -1,
+      editedItem: {
+        Name: '',
+        Surname: '',
+        Gender: 'Man',
+        BirthDate: new Date(),
+        Rank: 'Officer'
+      },
+      defaultItem: {
+        Name: '',
+        Surname: '',
+        Gender: 'Man',
+        BirthDate: new Date(),
+        Rank: 'Officer'
+      },
       filter: '',
       pagination: {
         page: 1,
@@ -79,9 +182,25 @@ export default {
           field: 'Rank',
           sortable: true,
           filterable: true
+        },
+        {
+          name: 'actions',
+          label: 'Actions',
+          sortable: false
         }
       ],
-      loading: false
+      loading: false,
+      dialog: false
+    }
+  },
+  computed: {
+    formTitle () {
+      return this.editedIndex === -1 ? 'New Police Officer' : 'Edit Police Officer'
+    }
+  },
+  watch: {
+    dialog (val) {
+      val || this.close()
     }
   },
   mounted () {
@@ -146,6 +265,65 @@ export default {
       const data = await response.json()
 
       return data
+    },
+
+    editItem (item) {
+      this.editedIndex = this.data.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.dialog = true
+    },
+
+    async deleteItem (item) {
+      if (!confirm('Are you sure you want to delete this item?')) return
+
+      await fetch(`/api/PoliceOfficers/${item.Id}`, {
+        method: 'DELETE'
+      })
+
+      // Trigger table for update
+      this.$refs.dataTable.requestServerInteraction({
+        pagination: this.pagination,
+        filter: this.filter
+      })
+    },
+
+    close () {
+      this.dialog = false
+      this.editedItem = Object.assign({}, this.defaultItem)
+      this.editedIndex = -1
+    },
+
+    async save () {
+      const isUpdating = this.editedIndex > -1
+
+      this.loading = true
+      await this.pushToServer(this.editedItem, isUpdating)
+
+      // Trigger table for update
+      this.$refs.dataTable.requestServerInteraction({
+        pagination: this.pagination,
+        filter: this.filter
+      })
+
+      this.loading = false
+
+      this.close()
+    },
+
+    async pushToServer (item, update = false) {
+      let url = `/api/PoliceOfficers/${update ? item.Id : ''}`
+
+      return fetch(url, {
+        method: update ? 'PUT' : 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ...item,
+          BirthDate: item.BirthDate !== null ? (new Date(item.BirthDate)).toISOString() : null
+        })
+      })
     }
   }
 }
