@@ -105,7 +105,7 @@ export default {
         {
           name: 'address',
           label: 'Address',
-          field: 'Address ',
+          field: 'Address',
           sortable: true,
           filterable: true
         },
