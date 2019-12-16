@@ -75,27 +75,7 @@
               <q-input v-model="editedItem.Gender" label="Gender"></q-input>
             </div>
             <div class="col-xs-12 col-sm-6 col-md-4">
-              <q-input
-                v-model="editedItem.BirthDate"
-                label="Birth Date"
-                mask="date"
-                :rules="['date']"
-              >
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy
-                      ref="birthDateProxy"
-                      transition-show="scale"
-                      transition-hide="scale"
-                    >
-                      <q-date
-                        v-model="editedItem.BirthDate"
-                        @input="() => $refs.birthDateProxy.hide()"
-                      />
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
+              <c-date-input v-model="editedItem.BirthDate" label="Birth Date"></c-date-input>
             </div>
             <div class="col-xs-12 col-sm-6 col-md-4">
               <q-input v-model="editedItem.Rank" label="Rank"></q-input>
@@ -133,11 +113,13 @@ import { date } from 'quasar'
 const { formatDate } = date
 
 import { CEntitySelector } from '../components/CEntitySelector'
+import { CDateInput } from '../components/CDateInput'
 
 export default {
   name: 'PoliceOfficersPage',
   components: {
-    CEntitySelector
+    CEntitySelector,
+    CDateInput
   },
   data () {
     return {
