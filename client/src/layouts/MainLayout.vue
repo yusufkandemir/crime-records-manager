@@ -11,17 +11,11 @@
           @click="isLeftDrawerOpen = !isLeftDrawerOpen"
         />
 
-        <q-toolbar-title>
-          Crime Records Manager
-        </q-toolbar-title>
+        <q-toolbar-title>Crime Records Manager</q-toolbar-title>
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="isLeftDrawerOpen"
-      elevated
-      show-if-above
-    >
+    <q-drawer v-model="isLeftDrawerOpen" elevated show-if-above>
       <q-list>
         <q-item to="/complaints">
           <q-item-section avatar>
