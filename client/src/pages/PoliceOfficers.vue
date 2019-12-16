@@ -100,6 +100,29 @@
             <div class="col-xs-12 col-sm-6 col-md-4">
               <q-input v-model="editedItem.Rank" label="Rank"></q-input>
             </div>
+            <div class="col-xs-12 col-sm-6 col-md-4">
+              <q-select
+                v-model="editedItem.StationId"
+                use-input
+                hide-selected
+                fill-input
+                input-debounce="500"
+                label="Station"
+                :options="stationOptions"
+                @filter="filterStationOptions"
+                map-options
+              >
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">No results</q-item-section>
+                  </q-item>
+                </template>
+
+                <template v-slot:prepend>
+                  <q-icon name="emoji_transportation" @click.stop />
+                </template>
+              </q-select>
+            </div>
           </div>
         </q-card-section>
 
@@ -129,14 +152,16 @@ export default {
         Surname: '',
         Gender: 'Man',
         BirthDate: new Date(),
-        Rank: 'Officer'
+        Rank: 'Officer',
+        StationId: 0
       },
       defaultItem: {
         Name: '',
         Surname: '',
         Gender: 'Man',
         BirthDate: new Date(),
-        Rank: 'Officer'
+        Rank: 'Officer',
+        StationId: 0
       },
       filter: '',
       pagination: {
@@ -190,7 +215,8 @@ export default {
         }
       ],
       loading: false,
-      dialog: false
+      dialog: false,
+      stationOptions: []
     }
   },
   computed: {
@@ -199,8 +225,15 @@ export default {
     }
   },
   watch: {
-    dialog (val) {
+    async dialog (val) {
       val || this.close()
+
+      // If updating an item, and it has a StationId set
+      if (this.editedIndex > -1 && this.editedItem.StationId > 0) {
+        // Fetch and update the options to prevent seeing just the id
+        // FIXME: the needed result might not be in the response because of pagination limits
+        this.stationOptions = await this.fetchStationOptions()
+      }
     }
   },
   mounted () {
@@ -321,8 +354,33 @@ export default {
         },
         body: JSON.stringify({
           ...item,
-          BirthDate: item.BirthDate !== null ? (new Date(item.BirthDate)).toISOString() : null
+          BirthDate: item.BirthDate !== null ? (new Date(item.BirthDate)).toISOString() : null,
+          StationId: item.StationId !== null ? item.StationId.value : null
         })
+      })
+    },
+
+    async fetchStationOptions (filter) {
+      const params = new URLSearchParams()
+
+      if (filter) {
+        params.append('$filter', `contains(Name, '${filter}')`)
+      }
+
+      let url = `/api/PoliceStations?${params.toString()}`
+
+      const response = await fetch(url)
+      const { value: stations } = await response.json()
+
+      return stations.map(station => ({
+        value: station.Id,
+        label: station.Name
+      }))
+    },
+
+    filterStationOptions (filter, update, abort) {
+      update(async () => {
+        this.stationOptions = await this.fetchStationOptions(filter)
       })
     }
   }
