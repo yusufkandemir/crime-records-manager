@@ -27,5 +27,6 @@ namespace CrimeRecordsManager.Models
         public DbSet<Suspect> Suspects { get; set; }
         public DbSet<Complaint> Complaints { get; set; }
         public DbSet<Complainant> Complainants { get; set; }
+        public DbSet<InvestigationReport> InvestigationReports { get; set; }
     }
 }
