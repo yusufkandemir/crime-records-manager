@@ -10,6 +10,7 @@ namespace CrimeRecordsManager.Models
         public DateTime OccuredAt { get; set; }
         public DateTime WrittenAt { get; set; }
 
+        public int ReporterId { get; set; }
         public virtual PoliceOfficer Reporter { get; set; }
     }
 }

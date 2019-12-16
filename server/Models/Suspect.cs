@@ -10,6 +10,7 @@ namespace CrimeRecordsManager.Models
         public string FacialAppearance { get; set; }
         public string PhysicalAppearance { get; set; }
 
+        public int? PictureId { get; set; }
         public virtual Attachment Picture { get; set; }
         public virtual ICollection<InvestigationReport> Reports { get; set; }
     }
