@@ -22,10 +22,18 @@
     >
       <div class="row q-col-gutter-md">
         <div class="col-xs-12 col-sm-6">
-          <q-input v-model="editedItem.Act" label="Act"></q-input>
+          <q-input v-model="editedItem.Act" label="Act">
+            <template v-slot:prepend>
+              <q-icon name="report_problem" />
+            </template>
+          </q-input>
         </div>
         <div class="col-xs-12 col-sm-6">
-          <q-input v-model="editedItem.Address" label="Address" autogrow></q-input>
+          <q-input v-model="editedItem.Address" label="Address" autogrow>
+            <template v-slot:prepend>
+              <q-icon name="room" />
+            </template>
+          </q-input>
         </div>
         <div class="col-xs-12 col-sm-6">
           <c-date-input v-model="editedItem.OccuredAt" label="Occured At"></c-date-input>
