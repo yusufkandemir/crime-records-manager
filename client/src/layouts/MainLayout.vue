@@ -20,6 +20,14 @@
 
     <q-drawer v-model="isLeftDrawerOpen" elevated show-if-above>
       <q-list>
+        <q-item to="/complainants">
+          <q-item-section avatar>
+            <q-icon name="record_voice_over" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Complainants</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item to="/complaints">
           <q-item-section avatar>
             <q-icon name="assignment_late" />
