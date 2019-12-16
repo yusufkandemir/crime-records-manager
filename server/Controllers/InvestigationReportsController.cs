@@ -17,14 +17,14 @@ namespace CrimeRecordsManager.Controllers
         [EnableQuery(MaxTop = 50)]
         public IQueryable<InvestigationReport> Get()
         {
-            return db.InvestigationReport;
+            return db.InvestigationReports;
         }
 
         // GET: api/InvestigationReports/5
         [EnableQuery]
         public SingleResult<InvestigationReport> Get([FromODataUri] int key)
         {
-            IQueryable<InvestigationReport> result = db.InvestigationReport.Where(p => p.Id == key);
+            IQueryable<InvestigationReport> result = db.InvestigationReports.Where(p => p.Id == key);
 
             return SingleResult.Create(result);
         }
@@ -37,7 +37,7 @@ namespace CrimeRecordsManager.Controllers
                 return BadRequest(ModelState);
             }
 
-            db.InvestigationReport.Add(investigationReport);
+            db.InvestigationReports.Add(investigationReport);
             await db.SaveChangesAsync();
 
             return Created(investigationReport);
@@ -85,7 +85,7 @@ namespace CrimeRecordsManager.Controllers
                 return BadRequest(ModelState);
             }
 
-            var entity = await db.InvestigationReport.FindAsync(key);
+            var entity = await db.InvestigationReports.FindAsync(key);
             if (entity == null)
             {
                 return NotFound();
@@ -115,13 +115,13 @@ namespace CrimeRecordsManager.Controllers
         // DELETE: api/InvestigationReports/5
         public async Task<IHttpActionResult> Delete([FromODataUri] int key)
         {
-            var investigationReport = await db.InvestigationReport.FindAsync(key);
+            var investigationReport = await db.InvestigationReports.FindAsync(key);
             if (investigationReport == null)
             {
                 return NotFound();
             }
 
-            db.InvestigationReport.Remove(investigationReport);
+            db.InvestigationReports.Remove(investigationReport);
             await db.SaveChangesAsync();
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -138,7 +138,7 @@ namespace CrimeRecordsManager.Controllers
 
         private bool InvestigationReportExists(int key)
         {
-            return db.InvestigationReport.Any(e => e.Id == key);
+            return db.InvestigationReports.Any(e => e.Id == key);
         }
     }
 }
