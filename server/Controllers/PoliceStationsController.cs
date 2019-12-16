@@ -115,12 +115,13 @@ namespace CrimeRecordsManager.Controllers
         // DELETE: api/PoliceStations/5
         public async Task<IHttpActionResult> Delete([FromODataUri] int key)
         {
-            var policeStation = await db.PoliceStations.FindAsync(key);
+            var policeStation = await db.PoliceStations.Include(x => x.Officers).FirstOrDefaultAsync(x => x.Id == key);
             if (policeStation == null)
             {
                 return NotFound();
             }
 
+            db.PoliceOfficers.RemoveRange(policeStation.Officers);
             db.PoliceStations.Remove(policeStation);
             await db.SaveChangesAsync();
 
