@@ -11,7 +11,10 @@
           @click="isLeftDrawerOpen = !isLeftDrawerOpen"
         />
 
-        <q-toolbar-title>Crime Records Manager</q-toolbar-title>
+        <q-avatar class="q-ml-sm">
+          <img src="statics/logo.png" />
+        </q-avatar>
+        <q-toolbar-title class="q-pl-sm">Crime Records Manager</q-toolbar-title>
       </q-toolbar>
     </q-header>
 
