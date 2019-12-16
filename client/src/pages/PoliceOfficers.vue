@@ -279,12 +279,22 @@ export default {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          ...item,
-          BirthDate: item.BirthDate !== null ? (new Date(item.BirthDate)).toISOString() : null,
-          StationId: item.StationId !== null ? item.StationId.value : null
-        })
+        body: JSON.stringify(this.processData(item))
       })
+    },
+
+    processData (item) {
+      const result = { ...item }
+
+      if (result.BirthDate !== null || result.BirthDate !== undefined) {
+        result.BirthDate = (new Date(result.BirthDate)).toISOString()
+      }
+
+      if (result.StationId !== null || result.StationId !== undefined) {
+        result.StationId = result.StationId.value
+      }
+
+      return result
     }
   }
 }
