@@ -1,6 +1,5 @@
 <template>
   <q-input
-    label="Date"
     mask="date"
     :rules="['date']"
     v-model="localValue"
