@@ -20,7 +20,7 @@
 
     <q-drawer v-model="isLeftDrawerOpen" elevated show-if-above>
       <q-list>
-        <q-item to="/">
+        <q-item to="/" exact>
           <q-item-section avatar>
             <q-icon name="dashboard" />
           </q-item-section>
