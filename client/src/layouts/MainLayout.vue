@@ -44,12 +44,12 @@
             <q-item-label>Suspects</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item to="/investigation-reports">
+        <q-item to="/">
           <q-item-section avatar>
-            <q-icon name="assignment" />
+            <q-icon name="dashboard" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Investigation Reports</q-item-label>
+            <q-item-label>Dashboard</q-item-label>
           </q-item-section>
         </q-item>
         <q-item to="/police-officers">
