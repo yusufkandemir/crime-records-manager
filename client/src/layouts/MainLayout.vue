@@ -20,6 +20,14 @@
 
     <q-drawer v-model="isLeftDrawerOpen" elevated show-if-above>
       <q-list>
+        <q-item to="/">
+          <q-item-section avatar>
+            <q-icon name="dashboard" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Dashboard</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item to="/complainants">
           <q-item-section avatar>
             <q-icon name="record_voice_over" />
@@ -44,12 +52,12 @@
             <q-item-label>Suspects</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item to="/">
+        <q-item to="/investigation-reports">
           <q-item-section avatar>
-            <q-icon name="dashboard" />
+            <q-icon name="assignment" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Dashboard</q-item-label>
+            <q-item-label>Investigation Reports</q-item-label>
           </q-item-section>
         </q-item>
         <q-item to="/police-officers">
